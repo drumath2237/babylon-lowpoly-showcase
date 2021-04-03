@@ -42,7 +42,7 @@ export default class CanvasManager {
 
     // eslint-disable-next-line new-cap
     SceneLoader.AppendAsync(
-        '/scenes/',
+        '/babylon-lowpoly-showcase/scenes/',
         'scene.babylon',
         this.scene,
         (event) => {
