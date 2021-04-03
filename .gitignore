@@ -88,4 +88,4 @@ typings/
 .dynamodb/
 
 # webpack build
-dist/src/
+dist/**/*.js*
