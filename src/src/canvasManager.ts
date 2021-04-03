@@ -1,4 +1,12 @@
-import {Engine, MeshBuilder, Scene} from '@babylonjs/core';
+import {
+  Axis,
+  Engine,
+  Mesh,
+  Scene,
+  SceneLoader,
+  Space,
+  Vector3,
+} from '@babylonjs/core';
 
 /**
  * Canvas Manager.
@@ -29,8 +37,29 @@ export default class CanvasManager {
    */
   private initScene() {
     // eslint-disable-next-line new-cap
-    MeshBuilder.CreateBox('box', {}, this.scene);
+    // MeshBuilder.CreateBox('box', {}, this.scene);
     this.scene.createDefaultCameraOrLight(true, true, true);
+
+    // eslint-disable-next-line new-cap
+    SceneLoader.AppendAsync(
+        '/scenes/',
+        'scene.babylon',
+        this.scene,
+        (event) => {
+          if (event.lengthComputable) {
+            const progress = event.loaded / event.total;
+            console.log(`loading progress: ${Math.ceil(progress * 100)}%`);
+          }
+        },
+    ).then((_scene) => {
+      const trophy = <Mesh>_scene.getMeshByName('trophy');
+      if (trophy !== null) {
+        trophy.position = new Vector3(0, -0.2, 0);
+        trophy.scaling = trophy.scaling.multiplyByFloats(0.5, 0.5, 0.5);
+        trophy.rotate(Axis.Y, 1.5 * Math.PI, Space.WORLD);
+        trophy.convertToFlatShadedMesh();
+      }
+    });
     // this.scene.createDefaultEnvironment();
   }
 
