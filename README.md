@@ -1,6 +1,6 @@
 # TypeScript Sandbox Template
 
-![github pages](https://github.com/drumath2237/typescript-sandbox-template/workflows/github%20pages/badge.svg)
+[![github pages](https://github.com/drumath2237/babylon-lowpoly-showcase/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/drumath2237/babylon-lowpoly-showcase/actions/workflows/gh-pages.yml)
 
 ## about
 
