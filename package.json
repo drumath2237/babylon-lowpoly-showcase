@@ -6,8 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "lint": "eslint ./src/**.ts",
-    "fix": "eslint --fix ./src/**.ts && prettier --write ./src/**.ts"
+    "lint": "eslint ./src/**/*.ts",
+    "fix": "eslint --fix ./src/**/*.ts && prettier --write ./src/**/*.ts"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.25",

@@ -11,12 +11,10 @@ body, html {
   height: 100%;
   text-align: center;
   display: table;
-  p.message {
+  #renderCanvas {
     display: table-cell;
     margin: 0;
-    font-size: 30px;
-    font-family: "consolas";
-    vertical-align: middle;
-    color: white;
+    height: 100%;
+    width: 100%;
   }
 }
