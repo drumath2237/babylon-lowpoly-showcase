@@ -1,10 +1,17 @@
 import {
   Axis,
+  Color3,
+  Color4,
   Engine,
+  GlowLayer,
   Mesh,
+  NoiseProceduralTexture,
+  ParticleSystem,
   Scene,
   SceneLoader,
   Space,
+  StandardMaterial,
+  Texture,
   Vector3,
 } from '@babylonjs/core';
 
@@ -36,12 +43,41 @@ export default class CanvasManager {
    * init scene
    */
   private initScene() {
-    // eslint-disable-next-line new-cap
-    // MeshBuilder.CreateBox('box', {}, this.scene);
     this.scene.createDefaultCameraOrLight(true, true, true);
 
-    // eslint-disable-next-line new-cap
-    SceneLoader.AppendAsync(
+    const gl = new GlowLayer('glow', this.scene);
+    gl.intensity = 1;
+
+    this.scene.clearColor = new Color4(0.144, 0.171, 0.21);
+
+    const particleSystem = new ParticleSystem('particle', 5000, this.scene);
+    particleSystem.emitter = new Vector3(0, 0, 0);
+    particleSystem.particleTexture = new Texture(
+        'https://playground.babylonjs.com/textures/flare.png',
+        this.scene,
+    );
+    particleSystem.maxSize = 0.01;
+    particleSystem.minSize = 0.01;
+    particleSystem.color1 = new Color4(5, 5, 5);
+    particleSystem.direction1 = new Vector3(0);
+    particleSystem.direction2 = new Vector3(0);
+
+    const noiseTexture =
+            new NoiseProceduralTexture('perlin', 256, this.scene);
+    noiseTexture.animationSpeedFactor = 5;
+    noiseTexture.persistence = 2;
+    noiseTexture.brightness = 0.5;
+    noiseTexture.octaves = 2;
+
+    particleSystem.noiseTexture = noiseTexture;
+    particleSystem.noiseStrength = new Vector3(1, 1, 1);
+
+    particleSystem.emitRate = 20;
+
+    particleSystem.start();
+
+    SceneLoader.ImportMeshAsync(
+        'trophy',
         '/babylon-lowpoly-showcase/scenes/',
         'scene.babylon',
         this.scene,
@@ -52,15 +88,16 @@ export default class CanvasManager {
           }
         },
     ).then((_scene) => {
-      const trophy = <Mesh>_scene.getMeshByName('trophy');
+      const trophy = <Mesh>_scene.meshes[0];
       if (trophy !== null) {
         trophy.position = new Vector3(0, -0.2, 0);
         trophy.scaling = trophy.scaling.multiplyByFloats(0.5, 0.5, 0.5);
         trophy.rotate(Axis.Y, 1.5 * Math.PI, Space.WORLD);
         trophy.convertToFlatShadedMesh();
+        const mat = <StandardMaterial>trophy.material;
+        mat.emissiveColor = new Color3(0.05, 0.05, 0.05);
       }
     });
-    // this.scene.createDefaultEnvironment();
   }
 
   /**

@@ -40,7 +40,7 @@ const config: webpack.Configuration[] = [
       contentBase: path.resolve(__dirname, 'dist'),
       watchContentBase: true,
       port: 8080,
-      publicPath: '/src/',
+      publicPath: '/',
     },
     resolve: {
       extensions: ['.ts', '.js'],
