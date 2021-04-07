@@ -1,7 +1,9 @@
 import {
   Axis,
+  Camera,
   Color3,
   Color4,
+  DefaultRenderingPipeline,
   Engine,
   GlowLayer,
   Mesh,
@@ -46,6 +48,31 @@ export default class CanvasManager {
   private initScene() {
     this.scene.createDefaultCameraOrLight(true, true, true);
 
+    const pipeline = new DefaultRenderingPipeline(
+        'defaultRP',
+        true,
+        this.scene,
+    );
+
+    pipeline.samples = 16;
+
+    pipeline.bloomEnabled = true;
+    pipeline.bloomThreshold = 0.8;
+    pipeline.bloomWeight = 0.5;
+    pipeline.bloomScale = 0.5;
+    pipeline.bloomKernel = 64;
+
+    pipeline.imageProcessingEnabled =true;
+    pipeline.imageProcessing.colorGradingEnabled = true;
+    pipeline.imageProcessing.toneMappingEnabled =true;
+    pipeline.imageProcessing.colorCurvesEnabled =true;
+    pipeline.imageProcessing.vignetteEnabled = true;
+    pipeline.imageProcessing.vignetteWeight = 10;
+    if (pipeline.imageProcessing.colorCurves!==null) {
+      pipeline.imageProcessing.colorCurves.globalSaturation = 70;
+      pipeline.imageProcessing.contrast = 1.2;
+    }
+
     // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
@@ -55,8 +82,8 @@ export default class CanvasManager {
     );
     particleSystem.maxSize = 0.003;
     particleSystem.minSize = 0.003;
-    particleSystem.color1 = new Color4(1, 1, 1, 1);
-    particleSystem.color2 = new Color4(1, 1, 1, 1);
+    particleSystem.color1 = new Color4(1.2, 1.2, 1.2, 1);
+    particleSystem.color2 = new Color4(1.2, 1.2, 1.2, 1);
     particleSystem.colorDead = new Color4(1, 1, 1, 0);
     particleSystem.direction1 = new Vector3(0);
     particleSystem.direction2 = new Vector3(0);
@@ -72,11 +99,11 @@ export default class CanvasManager {
     particleSystem.noiseTexture = noiseTexture;
     particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
 
-    particleSystem.emitRate = 20;
+    particleSystem.emitRate = 10;
 
     particleSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
 
-    particleSystem.preWarmCycles = 100;
+    particleSystem.preWarmCycles = 200;
 
     particleSystem.start();
 
@@ -101,7 +128,7 @@ export default class CanvasManager {
       }
     });
 
-    this.scene.clearColor = new Color4(0.144, 0.171, 0.21, 0);
+    this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
 
   /**
