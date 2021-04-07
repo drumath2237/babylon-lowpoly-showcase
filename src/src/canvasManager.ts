@@ -109,7 +109,7 @@ export default class CanvasManager {
 
     SceneLoader.ImportMeshAsync(
         'trophy',
-        '/scenes/',
+        '/babylon-lowpoly-showcase/scenes/',
         'scene.babylon',
         this.scene,
         (event) => {
