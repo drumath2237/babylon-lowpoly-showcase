@@ -82,7 +82,8 @@ export default class CanvasManager {
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
     particleSystem.particleTexture = new Texture(
-        '/img/particle.png',
+      '/babylon-lowpoly-showcase/img/particle.png',
+      // '/img/particle.png',
         this.scene,
     );
     particleSystem.maxSize = 0.003;
