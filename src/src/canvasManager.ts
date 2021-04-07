@@ -6,6 +6,7 @@ import {
   GlowLayer,
   Mesh,
   NoiseProceduralTexture,
+  Particle,
   ParticleSystem,
   Scene,
   SceneLoader,
@@ -45,40 +46,43 @@ export default class CanvasManager {
   private initScene() {
     this.scene.createDefaultCameraOrLight(true, true, true);
 
-    const gl = new GlowLayer('glow', this.scene);
-    gl.intensity = 1;
-
-    this.scene.clearColor = new Color4(0.144, 0.171, 0.21);
-
+    // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
     particleSystem.particleTexture = new Texture(
-        'https://playground.babylonjs.com/textures/flare.png',
+        '/img/particle.png',
         this.scene,
     );
-    particleSystem.maxSize = 0.01;
-    particleSystem.minSize = 0.01;
-    particleSystem.color1 = new Color4(5, 5, 5);
+    particleSystem.maxSize = 0.003;
+    particleSystem.minSize = 0.003;
+    particleSystem.color1 = new Color4(1, 1, 1, 1);
+    particleSystem.color2 = new Color4(1, 1, 1, 1);
+    particleSystem.colorDead = new Color4(1, 1, 1, 0);
     particleSystem.direction1 = new Vector3(0);
     particleSystem.direction2 = new Vector3(0);
+    particleSystem.maxLifeTime = 10;
+    particleSystem.minLifeTime = 10;
 
-    const noiseTexture =
-            new NoiseProceduralTexture('perlin', 256, this.scene);
-    noiseTexture.animationSpeedFactor = 5;
-    noiseTexture.persistence = 2;
+    const noiseTexture = new NoiseProceduralTexture('perlin', 256, this.scene);
+    noiseTexture.animationSpeedFactor = 1;
+    noiseTexture.persistence = 1;
     noiseTexture.brightness = 0.5;
     noiseTexture.octaves = 2;
 
     particleSystem.noiseTexture = noiseTexture;
-    particleSystem.noiseStrength = new Vector3(1, 1, 1);
+    particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
 
     particleSystem.emitRate = 20;
+
+    particleSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
+
+    particleSystem.preWarmCycles = 100;
 
     particleSystem.start();
 
     SceneLoader.ImportMeshAsync(
         'trophy',
-        '/babylon-lowpoly-showcase/scenes/',
+        '/scenes/',
         'scene.babylon',
         this.scene,
         (event) => {
@@ -94,10 +98,10 @@ export default class CanvasManager {
         trophy.scaling = trophy.scaling.multiplyByFloats(0.5, 0.5, 0.5);
         trophy.rotate(Axis.Y, 1.5 * Math.PI, Space.WORLD);
         trophy.convertToFlatShadedMesh();
-        const mat = <StandardMaterial>trophy.material;
-        mat.emissiveColor = new Color3(0.05, 0.05, 0.05);
       }
     });
+
+    this.scene.clearColor = new Color4(0.144, 0.171, 0.21, 0);
   }
 
   /**

@@ -10,6 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "allowJs": true,
-    "outDir": ""
+    "outDir": "",
+    "outFile": ""
   }
 }
