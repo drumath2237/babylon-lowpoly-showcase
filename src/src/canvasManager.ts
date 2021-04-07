@@ -4,6 +4,7 @@ import {
   Color3,
   Color4,
   DefaultRenderingPipeline,
+  DepthOfFieldEffectBlurLevel,
   Engine,
   GlowLayer,
   Mesh,
@@ -69,9 +70,13 @@ export default class CanvasManager {
     pipeline.imageProcessing.vignetteEnabled = true;
     pipeline.imageProcessing.vignetteWeight = 10;
     if (pipeline.imageProcessing.colorCurves!==null) {
-      pipeline.imageProcessing.colorCurves.globalSaturation = 70;
+      pipeline.imageProcessing.colorCurves.globalSaturation = 71;
       pipeline.imageProcessing.contrast = 1.2;
     }
+    // pipeline.depthOfFieldEnabled = true;
+    // pipeline.depthOfField.focalLength = 1;
+    // pipeline.depthOfFieldBlurLevel = DepthOfFieldEffectBlurLevel.Low;
+    // pipeline.depthOfField.focusDistance = 0.6;
 
     // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
