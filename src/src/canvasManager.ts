@@ -1,27 +1,18 @@
 import {
+  ArcRotateCamera,
   Axis,
-  BaseTexture,
-  Camera,
-  Color3,
   Color4,
   DefaultRenderingPipeline,
-  DepthOfFieldEffectBlurLevel,
   Engine,
-  GlowLayer,
-  GrainPostProcess,
   Mesh,
   NoiseProceduralTexture,
-  Particle,
   ParticleSystem,
-  ProceduralTexture,
   Scene,
   SceneLoader,
   Space,
-  StandardMaterial,
   Texture,
   Vector3,
 } from '@babylonjs/core';
-import { PerlinNoiseProceduralTexture } from 'babylonjs-procedural-textures';
 
 /**
  * Canvas Manager.
@@ -30,6 +21,7 @@ export default class CanvasManager {
   private canvas: HTMLCanvasElement;
   private engine: Engine;
   private scene: Scene;
+  private mainCamera: ArcRotateCamera;
 
   private noiseTexture: NoiseProceduralTexture;
 
@@ -42,7 +34,15 @@ export default class CanvasManager {
     this.engine = new Engine(this.canvas);
     this.scene = new Scene(this.engine);
 
-    this.noiseTexture = new NoiseProceduralTexture("noise", 1, this.scene);
+    this.mainCamera = new ArcRotateCamera(
+        'mainCamera',
+        -Math.PI / 2, Math.PI / 2, 1.5,
+        new Vector3(0, 0, 0),
+        this.scene,
+        true,
+    );
+
+    this.noiseTexture = new NoiseProceduralTexture('noise', 1, this.scene);
     this.noiseTexture.brightness = 0.2;
     this.noiseTexture.level = 0.5;
     this.noiseTexture.animationSpeedFactor = 1;
@@ -58,12 +58,10 @@ export default class CanvasManager {
    * init scene
    */
   private initScene() {
-    this.scene.createDefaultCameraOrLight(true, true, true);
-
     const pipeline = new DefaultRenderingPipeline(
-      'defaultRP',
-      true,
-      this.scene,
+        'defaultRP',
+        true,
+        this.scene,
     );
 
     pipeline.samples = 16;
@@ -99,7 +97,6 @@ export default class CanvasManager {
           pipeline.chromaticAberrationEnabled = true;
           pipeline.chromaticAberration.aberrationAmount = 500;
           pipeline.chromaticAberration.radialIntensity = 2;
-
         } else {
           pipeline.imageProcessing.contrast = 1.2;
           pipeline.grainEnabled = false;
@@ -113,9 +110,9 @@ export default class CanvasManager {
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
     particleSystem.particleTexture = new Texture(
-      '/babylon-lowpoly-showcase/img/particle.png',
-      // '/img/particle.png',
-      this.scene,
+        '/babylon-lowpoly-showcase/img/particle.png',
+        // '/img/particle.png',
+        this.scene,
     );
     particleSystem.maxSize = 0.003;
     particleSystem.minSize = 0.003;
@@ -145,17 +142,17 @@ export default class CanvasManager {
     particleSystem.start();
 
     SceneLoader.ImportMeshAsync(
-      'trophy',
-      '/babylon-lowpoly-showcase/scenes/',
-      // '/scenes/',
-      'scene.babylon',
-      this.scene,
-      (event) => {
-        if (event.lengthComputable) {
-          const progress = event.loaded / event.total;
-          console.log(`loading progress: ${Math.ceil(progress * 100)}%`);
-        }
-      },
+        'trophy',
+        '/babylon-lowpoly-showcase/scenes/',
+        // '/scenes/',
+        'scene.babylon',
+        this.scene,
+        (event) => {
+          if (event.lengthComputable) {
+            const progress = event.loaded / event.total;
+            console.log(`loading progress: ${Math.ceil(progress * 100)}%`);
+          }
+        },
     ).then((_scene) => {
       const trophy = <Mesh>_scene.meshes[0];
       if (trophy !== null) {
