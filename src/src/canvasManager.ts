@@ -98,7 +98,7 @@ export default class CanvasManager {
           pipeline.grain.animated = true;
           pipeline.chromaticAberrationEnabled = true;
           pipeline.chromaticAberration.aberrationAmount = 500;
-          pipeline.chromaticAberration.radialIntensity = 5;
+          pipeline.chromaticAberration.radialIntensity = 2;
 
         } else {
           pipeline.imageProcessing.contrast = 1.2;
