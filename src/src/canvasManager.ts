@@ -1,5 +1,6 @@
 import {
   Axis,
+  BaseTexture,
   Camera,
   Color3,
   Color4,
@@ -7,10 +8,12 @@ import {
   DepthOfFieldEffectBlurLevel,
   Engine,
   GlowLayer,
+  GrainPostProcess,
   Mesh,
   NoiseProceduralTexture,
   Particle,
   ParticleSystem,
+  ProceduralTexture,
   Scene,
   SceneLoader,
   Space,
@@ -18,6 +21,7 @@ import {
   Texture,
   Vector3,
 } from '@babylonjs/core';
+import { PerlinNoiseProceduralTexture } from 'babylonjs-procedural-textures';
 
 /**
  * Canvas Manager.
@@ -27,6 +31,8 @@ export default class CanvasManager {
   private engine: Engine;
   private scene: Scene;
 
+  private noiseTexture: NoiseProceduralTexture;
+
   /**
    * constrcutor.
    * @param {HTMLCanvasElement} _canvas canvas element
@@ -35,6 +41,11 @@ export default class CanvasManager {
     this.canvas = _canvas;
     this.engine = new Engine(this.canvas);
     this.scene = new Scene(this.engine);
+
+    this.noiseTexture = new NoiseProceduralTexture("noise", 1, this.scene);
+    this.noiseTexture.brightness = 0.2;
+    this.noiseTexture.level = 0.5;
+    this.noiseTexture.animationSpeedFactor = 1;
 
     this.initScene();
 
@@ -50,9 +61,9 @@ export default class CanvasManager {
     this.scene.createDefaultCameraOrLight(true, true, true);
 
     const pipeline = new DefaultRenderingPipeline(
-        'defaultRP',
-        true,
-        this.scene,
+      'defaultRP',
+      true,
+      this.scene,
     );
 
     pipeline.samples = 16;
@@ -63,20 +74,40 @@ export default class CanvasManager {
     pipeline.bloomScale = 0.5;
     pipeline.bloomKernel = 64;
 
-    pipeline.imageProcessingEnabled =true;
+    pipeline.imageProcessingEnabled = true;
     pipeline.imageProcessing.colorGradingEnabled = true;
-    pipeline.imageProcessing.toneMappingEnabled =true;
-    pipeline.imageProcessing.colorCurvesEnabled =true;
+    pipeline.imageProcessing.toneMappingEnabled = true;
+    pipeline.imageProcessing.colorCurvesEnabled = true;
     pipeline.imageProcessing.vignetteEnabled = true;
     pipeline.imageProcessing.vignetteWeight = 10;
-    if (pipeline.imageProcessing.colorCurves!==null) {
-      pipeline.imageProcessing.colorCurves.globalSaturation = 71;
+    if (pipeline.imageProcessing.colorCurves !== null) {
+      pipeline.imageProcessing.colorCurves.globalSaturation = 70;
       pipeline.imageProcessing.contrast = 1.2;
     }
-    // pipeline.depthOfFieldEnabled = true;
-    // pipeline.depthOfField.focalLength = 1;
-    // pipeline.depthOfFieldBlurLevel = DepthOfFieldEffectBlurLevel.Low;
-    // pipeline.depthOfField.focusDistance = 0.6;
+
+    setInterval(() => {
+      const arrayBufferView = this.noiseTexture.readPixels();
+      if (arrayBufferView !== null) {
+        const val = new Uint8Array(arrayBufferView.buffer)[0];
+        console.log(val);
+
+        if (val == 80 || val == 22 || val == 74 || val == 24 || val == 65 || val == 66) {
+          pipeline.imageProcessing.contrast = 10;
+          pipeline.grainEnabled = true;
+          pipeline.grain.intensity = 200;
+          pipeline.grain.animated = true;
+          pipeline.chromaticAberrationEnabled = true;
+          pipeline.chromaticAberration.aberrationAmount = 500;
+          pipeline.chromaticAberration.radialIntensity = 5;
+
+        } else {
+          pipeline.imageProcessing.contrast = 1.2;
+          pipeline.grainEnabled = false;
+          pipeline.chromaticAberrationEnabled = false;
+        }
+      }
+    }, 100);
+
 
     // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
@@ -84,7 +115,7 @@ export default class CanvasManager {
     particleSystem.particleTexture = new Texture(
       '/babylon-lowpoly-showcase/img/particle.png',
       // '/img/particle.png',
-        this.scene,
+      this.scene,
     );
     particleSystem.maxSize = 0.003;
     particleSystem.minSize = 0.003;
@@ -114,17 +145,17 @@ export default class CanvasManager {
     particleSystem.start();
 
     SceneLoader.ImportMeshAsync(
-        'trophy',
-        '/babylon-lowpoly-showcase/scenes/',
-        // '/scenes/',
-        'scene.babylon',
-        this.scene,
-        (event) => {
-          if (event.lengthComputable) {
-            const progress = event.loaded / event.total;
-            console.log(`loading progress: ${Math.ceil(progress * 100)}%`);
-          }
-        },
+      'trophy',
+      '/babylon-lowpoly-showcase/scenes/',
+      // '/scenes/',
+      'scene.babylon',
+      this.scene,
+      (event) => {
+        if (event.lengthComputable) {
+          const progress = event.loaded / event.total;
+          console.log(`loading progress: ${Math.ceil(progress * 100)}%`);
+        }
+      },
     ).then((_scene) => {
       const trophy = <Mesh>_scene.meshes[0];
       if (trophy !== null) {
