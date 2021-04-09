@@ -119,7 +119,7 @@ float snoise3(vec3 v)
 const float interval = 7.0;
 
 void main(void){
-  float strength = smoothstep(interval * 0.7, interval, interval - mod(time, interval));
+  float strength = smoothstep(interval * 0.9, interval, interval - mod(time, interval));
   vec2 shake = vec2(strength * 8.0 + 0.5) * vec2(
     random(vec2(time)) * 2.0 - 1.0,
     random(vec2(time * 2.0)) * 2.0 - 1.0
@@ -134,15 +134,13 @@ void main(void){
     ) / resolution.x;
   float rgbDiff = 0.001;
   float rgbUvX = vUV.x;
-  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y) + shake*0.5).r;
+  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y)).r;
   float g = texture2D(textureSampler, vec2(rgbUvX, vUV.y)).g;
-  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y) + shake*0.5).b;
-
-  float whiteNoise = (random(vUV + mod(time, 10.0)) * 2.0 - 1.0) * (0.15 + strength * 0.15);
+  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y)).b;
 
   float bnTime = floor(time * 20.0) * 200.0;
   float noiseX = step((snoise3(vec3(0.0, vUV.x * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.3);
-  float noiseY = step((snoise3(vec3(0.0, vUV.y * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.3);
+  float noiseY = step((snoise3(vec3(0.0, vUV.y * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.15);
   float bnMask = noiseX * noiseY;
   float bnUvX = vUV.x + sin(bnTime) * 0.2 + rgbWave;
   float bnR = texture2D(textureSampler, vec2(bnUvX + rgbDiff, vUV.y)).r * bnMask;
@@ -151,8 +149,8 @@ void main(void){
   vec4 blockNoise = vec4(bnR, bnG, bnB, 1.0);
 
   float bnTime2 = floor(time * 25.0) * 300.0;
-  float noiseX2 = step((snoise3(vec3(0.0, vUV.x * 2.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.5);
-  float noiseY2 = step((snoise3(vec3(0.0, vUV.y * 8.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.3);
+  float noiseX2 = step((snoise3(vec3(0.0, vUV.x * 2.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.4);
+  float noiseY2 = step((snoise3(vec3(0.0, vUV.y * 8.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.2);
   float bnMask2 = noiseX2 * noiseY2;
   float bnR2 = texture2D(textureSampler, vec2(bnUvX + rgbDiff, vUV.y)).r * bnMask2;
   float bnG2 = texture2D(textureSampler, vec2(bnUvX, vUV.y)).g * bnMask2;
