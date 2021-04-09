@@ -38,11 +38,12 @@ export default class CanvasManager {
         'mainCamera',
         -Math.PI / 2,
         Math.PI / 2,
-        1.5,
+        1,
         new Vector3(0, 0, 0),
         this.scene,
         true,
     );
+    this.mainCamera.minZ = 0;
 
     this.initScene();
 
@@ -155,7 +156,7 @@ export default class CanvasManager {
       pipeline.imageProcessing.contrast = 1.2;
     }
     pipeline.imageProcessing.vignetteEnabled = true;
-    pipeline.imageProcessing.vignetteWeight = 10;
+    pipeline.imageProcessing.vignetteWeight = 5;
   }
 
   private customPP() {
