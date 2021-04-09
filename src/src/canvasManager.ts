@@ -25,8 +25,6 @@ export default class CanvasManager {
   private scene: Scene;
   private mainCamera: ArcRotateCamera;
 
-  private noiseTexture: NoiseProceduralTexture;
-
   /**
    * constrcutor.
    * @param {HTMLCanvasElement} _canvas canvas element
@@ -46,11 +44,6 @@ export default class CanvasManager {
         true,
     );
 
-    this.noiseTexture = new NoiseProceduralTexture('noise', 1, this.scene);
-    this.noiseTexture.brightness = 0.2;
-    this.noiseTexture.level = 0.5;
-    this.noiseTexture.animationSpeedFactor = 1;
-
     this.initScene();
 
     this.engine.runRenderLoop(() => {
@@ -63,42 +56,7 @@ export default class CanvasManager {
    */
   private initScene() {
     this.configurePostProcessings();
-
-    // particle system settings
-    const particleSystem = new ParticleSystem('particle', 5000, this.scene);
-    particleSystem.emitter = new Vector3(0, 0, 0);
-    particleSystem.particleTexture = new Texture(
-      process.env.GH_PAGES === 'true' ?
-        '/babylon-lowpoly-showcase/img/particle.png' :
-        '/img/particle.png',
-      this.scene,
-    );
-    particleSystem.maxSize = 0.003;
-    particleSystem.minSize = 0.003;
-    particleSystem.color1 = new Color4(1.2, 1.2, 1.2, 1);
-    particleSystem.color2 = new Color4(1.2, 1.2, 1.2, 1);
-    particleSystem.colorDead = new Color4(1, 1, 1, 0);
-    particleSystem.direction1 = new Vector3(0);
-    particleSystem.direction2 = new Vector3(0);
-    particleSystem.maxLifeTime = 10;
-    particleSystem.minLifeTime = 10;
-
-    const noiseTexture = new NoiseProceduralTexture('perlin', 256, this.scene);
-    noiseTexture.animationSpeedFactor = 1;
-    noiseTexture.persistence = 1;
-    noiseTexture.brightness = 0.5;
-    noiseTexture.octaves = 2;
-
-    particleSystem.noiseTexture = noiseTexture;
-    particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
-
-    particleSystem.emitRate = 10;
-
-    particleSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
-
-    particleSystem.preWarmCycles = 200;
-
-    particleSystem.start();
+    this.configureParticles();
 
     SceneLoader.ImportMeshAsync(
         'trophy',
@@ -126,33 +84,68 @@ export default class CanvasManager {
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
 
+  private configureParticles() {
+    const particleSystem = new ParticleSystem('particle', 5000, this.scene);
+    particleSystem.emitter = new Vector3(0, 0, 0);
+    particleSystem.particleTexture = new Texture(
+      process.env.GH_PAGES === 'true' ?
+        'https://playground.babylonjs.com/textures/flare.png' :
+        'https://playground.babylonjs.com/textures/flare.png',
+      this.scene,
+    );
+    particleSystem.maxSize = 0.007;
+    particleSystem.minSize = 0.007;
+    particleSystem.color1 = new Color4(3, 3, 3, 1);
+    particleSystem.color2 = new Color4(3, 3, 3, 1);
+    particleSystem.colorDead = new Color4(1, 1, 1, 0);
+    particleSystem.direction1 = new Vector3(0);
+    particleSystem.direction2 = new Vector3(0);
+    particleSystem.maxLifeTime = 10;
+    particleSystem.minLifeTime = 10;
+
+    const noiseTexture = new NoiseProceduralTexture('perlin', 256, this.scene);
+    noiseTexture.animationSpeedFactor = 1;
+    noiseTexture.persistence = 1;
+    noiseTexture.brightness = 0.5;
+    noiseTexture.octaves = 2;
+
+    particleSystem.noiseTexture = noiseTexture;
+    particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
+
+    particleSystem.emitRate = 10;
+
+    particleSystem.preWarmCycles = 200;
+
+    particleSystem.start();
+  }
+
   private configurePostProcessings() {
+    this.customPP();
+
     const pipeline = new DefaultRenderingPipeline(
         'defaultRP',
         true,
         this.scene,
     );
 
-    this.customPP();
-
     pipeline.samples = 16;
 
     pipeline.bloomEnabled = true;
-    pipeline.bloomThreshold = 0.8;
-    pipeline.bloomWeight = 0.5;
-    pipeline.bloomScale = 0.5;
+    pipeline.bloomThreshold = 0.7;
+    pipeline.bloomWeight = 0.7;
+    pipeline.bloomScale = 0.7;
     pipeline.bloomKernel = 64;
 
     pipeline.imageProcessingEnabled = true;
     pipeline.imageProcessing.colorGradingEnabled = true;
     pipeline.imageProcessing.toneMappingEnabled = true;
     pipeline.imageProcessing.colorCurvesEnabled = true;
-    pipeline.imageProcessing.vignetteEnabled = true;
-    pipeline.imageProcessing.vignetteWeight = 10;
     if (pipeline.imageProcessing.colorCurves !== null) {
       pipeline.imageProcessing.colorCurves.globalSaturation = 70;
       pipeline.imageProcessing.contrast = 1.2;
     }
+    pipeline.imageProcessing.vignetteEnabled = true;
+    pipeline.imageProcessing.vignetteWeight = 10;
   }
 
   private customPP() {

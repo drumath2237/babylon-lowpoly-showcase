@@ -134,9 +134,9 @@ void main(void){
     ) / resolution.x;
   float rgbDiff = 0.001;
   float rgbUvX = vUV.x;
-  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y) + shake*0.3).r;
+  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y)).r;
   float g = texture2D(textureSampler, vec2(rgbUvX, vUV.y)).g;
-  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y) + shake*0.3).b;
+  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y)).b;
 
   float bnTime = floor(time * 20.0) * 200.0;
   float noiseX = step((snoise3(vec3(0.0, vUV.x * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.3);
