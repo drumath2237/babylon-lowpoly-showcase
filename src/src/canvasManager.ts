@@ -81,6 +81,12 @@ export default class CanvasManager {
       }
     });
 
+    document.body.addEventListener('mousemove', (event)=>{
+      const pos = event.pageX/this.engine.getRenderWidth();
+      const range = Math.PI/2;
+      this.mainCamera.alpha = ((-Math.PI/2)+(range/2)) - (pos*range);
+    });
+
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
 
