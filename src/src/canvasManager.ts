@@ -36,7 +36,9 @@ export default class CanvasManager {
 
     this.mainCamera = new ArcRotateCamera(
         'mainCamera',
-        -Math.PI / 2, Math.PI / 2, 1.5,
+        -Math.PI / 2,
+        Math.PI / 2,
+        1.5,
         new Vector3(0, 0, 0),
         this.scene,
         true,
@@ -89,7 +91,14 @@ export default class CanvasManager {
         const val = new Uint8Array(arrayBufferView.buffer)[0];
         console.log(val);
 
-        if (val == 80 || val == 22 || val == 74 || val == 24 || val == 65 || val == 66) {
+        if (
+          val == 80 ||
+          val == 22 ||
+          val == 74 ||
+          val == 24 ||
+          val == 65 ||
+          val == 66
+        ) {
           pipeline.imageProcessing.contrast = 10;
           pipeline.grainEnabled = true;
           pipeline.grain.intensity = 200;
@@ -105,14 +114,14 @@ export default class CanvasManager {
       }
     }, 100);
 
-
     // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
     particleSystem.particleTexture = new Texture(
-        '/babylon-lowpoly-showcase/img/particle.png',
-        // '/img/particle.png',
-        this.scene,
+      process.env.GH_PAGES==='true' ?
+        '/babylon-lowpoly-showcase/img/particle.png' :
+        '/img/particle.png',
+      this.scene,
     );
     particleSystem.maxSize = 0.003;
     particleSystem.minSize = 0.003;
@@ -143,8 +152,9 @@ export default class CanvasManager {
 
     SceneLoader.ImportMeshAsync(
         'trophy',
-        '/babylon-lowpoly-showcase/scenes/',
-        // '/scenes/',
+        process.env.GH_PAGES==='true' ?
+          '/babylon-lowpoly-showcase/scenes/' :
+          '/scenes/',
         'scene.babylon',
         this.scene,
         (event) => {

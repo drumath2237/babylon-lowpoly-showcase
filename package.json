@@ -4,8 +4,9 @@
   "license": "apache-2.0",
   "private": false,
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server",
+    "build": "cross-env GH_PAGES=\"false\" webpack",
+    "build:gh-pages": "cross-env GH_PAGES=\"true\" webpack",
+    "start": "cross-env GH_PAGES=\"false\" webpack-dev-server",
     "lint": "eslint ./src/**/*.ts",
     "fix": "eslint --fix ./src/**/*.ts && prettier --write ./src/**/*.ts"
   },

@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: "12.x"
       - run: yarn --frozen-lockfile
-      - run: yarn build
+      - run: yarn build:gh-pages
       - name: deploy gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:

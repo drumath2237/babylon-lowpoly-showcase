@@ -46,6 +46,11 @@ const config: webpack.Configuration[] = [
       extensions: ['.ts', '.js'],
       modules: ['node_modules'],
     },
+    plugins: [
+      new webpack.EnvironmentPlugin({
+        GH_PAGES: process.env.GH_PAGES,
+      }),
+    ],
   },
 ];
 
