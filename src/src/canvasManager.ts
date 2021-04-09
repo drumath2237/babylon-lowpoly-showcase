@@ -27,8 +27,6 @@ export default class CanvasManager {
 
   private noiseTexture: NoiseProceduralTexture;
 
-  private frameCount: number;
-
   /**
    * constrcutor.
    * @param {HTMLCanvasElement} _canvas canvas element
@@ -37,8 +35,6 @@ export default class CanvasManager {
     this.canvas = _canvas;
     this.engine = new Engine(this.canvas);
     this.scene = new Scene(this.engine);
-
-    this.frameCount = 0;
 
     this.mainCamera = new ArcRotateCamera(
         'mainCamera',
@@ -66,53 +62,7 @@ export default class CanvasManager {
    * init scene
    */
   private initScene() {
-    const pipeline = new DefaultRenderingPipeline(
-        'defaultRP',
-        true,
-        this.scene,
-    );
-
-    this.customPP();
-
-    pipeline.samples = 16;
-
-    pipeline.bloomEnabled = true;
-    pipeline.bloomThreshold = 0.8;
-    pipeline.bloomWeight = 0.5;
-    pipeline.bloomScale = 0.5;
-    pipeline.bloomKernel = 64;
-
-    pipeline.imageProcessingEnabled = true;
-    pipeline.imageProcessing.colorGradingEnabled = true;
-    pipeline.imageProcessing.toneMappingEnabled = true;
-    pipeline.imageProcessing.colorCurvesEnabled = true;
-    pipeline.imageProcessing.vignetteEnabled = true;
-    pipeline.imageProcessing.vignetteWeight = 10;
-    if (pipeline.imageProcessing.colorCurves !== null) {
-      pipeline.imageProcessing.colorCurves.globalSaturation = 70;
-      pipeline.imageProcessing.contrast = 1.2;
-    }
-
-    setInterval(() => {
-      const arrayBufferView = this.noiseTexture.readPixels();
-      if (arrayBufferView !== null) {
-        const val = new Uint8Array(arrayBufferView.buffer)[0];
-
-        if (false) {
-          pipeline.imageProcessing.contrast = 10;
-          pipeline.grainEnabled = true;
-          pipeline.grain.intensity = 200;
-          pipeline.grain.animated = true;
-          pipeline.chromaticAberrationEnabled = true;
-          pipeline.chromaticAberration.aberrationAmount = 500;
-          pipeline.chromaticAberration.radialIntensity = 2;
-        } else {
-          pipeline.imageProcessing.contrast = 1.2;
-          pipeline.grainEnabled = false;
-          pipeline.chromaticAberrationEnabled = false;
-        }
-      }
-    }, 100);
+    this.configurePostProcessings();
 
     // particle system settings
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
@@ -176,6 +126,35 @@ export default class CanvasManager {
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
 
+  private configurePostProcessings() {
+    const pipeline = new DefaultRenderingPipeline(
+        'defaultRP',
+        true,
+        this.scene,
+    );
+
+    this.customPP();
+
+    pipeline.samples = 16;
+
+    pipeline.bloomEnabled = true;
+    pipeline.bloomThreshold = 0.8;
+    pipeline.bloomWeight = 0.5;
+    pipeline.bloomScale = 0.5;
+    pipeline.bloomKernel = 64;
+
+    pipeline.imageProcessingEnabled = true;
+    pipeline.imageProcessing.colorGradingEnabled = true;
+    pipeline.imageProcessing.toneMappingEnabled = true;
+    pipeline.imageProcessing.colorCurvesEnabled = true;
+    pipeline.imageProcessing.vignetteEnabled = true;
+    pipeline.imageProcessing.vignetteWeight = 10;
+    if (pipeline.imageProcessing.colorCurves !== null) {
+      pipeline.imageProcessing.colorCurves.globalSaturation = 70;
+      pipeline.imageProcessing.contrast = 1.2;
+    }
+  }
+
   private customPP() {
     const postProcess = new PostProcess(
         'glitch',
@@ -189,9 +168,7 @@ export default class CanvasManager {
     );
     postProcess.onApply = (effect:Effect)=>{
       effect.setFloat2('resolution', postProcess.width, postProcess.height);
-      effect.setFloat('time', this.frameCount/60);
-      // this.frameCount+=this.engine.getDeltaTime();
-      console.log(this.frameCount);
+      effect.setFloat('time', this.scene.getFrameId()/this.engine.getFps());
     };
   }
   /**
@@ -199,7 +176,5 @@ export default class CanvasManager {
    */
   private update() {
     this.scene.render();
-
-    this.frameCount++;
   }
 }
