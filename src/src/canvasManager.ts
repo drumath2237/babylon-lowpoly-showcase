@@ -82,9 +82,11 @@ export default class CanvasManager {
     });
 
     document.body.addEventListener('mousemove', (event)=>{
-      const pos = event.pageX/this.engine.getRenderWidth();
-      const range = Math.PI/8;
-      this.mainCamera.alpha = ((-Math.PI/2)+(range/2)) - (pos*range);
+      const posX = event.pageX / this.engine.getRenderWidth();
+      const posY = event.pageY / this.engine.getRenderHeight();
+      const range = Math.PI/12;
+      this.mainCamera.alpha = ((-Math.PI / 2) + (range / 2)) - (posX * range);
+      this.mainCamera.beta = ((Math.PI / 2) + (range / 2)) - (posY * range);
     });
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
@@ -93,13 +95,15 @@ export default class CanvasManager {
   private configureParticles() {
     const particleSystem = new ParticleSystem('particle', 5000, this.scene);
     particleSystem.emitter = new Vector3(0, 0, 0);
+    particleSystem.minEmitBox = new Vector3(-1, -1, -1);
+    particleSystem.maxEmitBox = new Vector3(1, 1, 1);
     particleSystem.particleTexture = new Texture(
       process.env.GH_PAGES === 'true' ?
         'https://playground.babylonjs.com/textures/flare.png' :
         'https://playground.babylonjs.com/textures/flare.png',
       this.scene,
     );
-    particleSystem.maxSize = 0.007;
+    particleSystem.maxSize = 0.010;
     particleSystem.minSize = 0.007;
     particleSystem.color1 = new Color4(3, 3, 3, 1);
     particleSystem.color2 = new Color4(3, 3, 3, 1);
@@ -118,7 +122,7 @@ export default class CanvasManager {
     particleSystem.noiseTexture = noiseTexture;
     particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
 
-    particleSystem.emitRate = 10;
+    particleSystem.emitRate = 20;
 
     particleSystem.preWarmCycles = 200;
 
