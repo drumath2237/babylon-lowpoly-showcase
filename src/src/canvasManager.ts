@@ -83,7 +83,7 @@ export default class CanvasManager {
 
     document.body.addEventListener('mousemove', (event)=>{
       const pos = event.pageX/this.engine.getRenderWidth();
-      const range = Math.PI/2;
+      const range = Math.PI/8;
       this.mainCamera.alpha = ((-Math.PI/2)+(range/2)) - (pos*range);
     });
 
