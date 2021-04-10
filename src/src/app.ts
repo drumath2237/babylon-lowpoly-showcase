@@ -23,4 +23,8 @@ export default class App {
   public static run(canvas: HTMLCanvasElement) {
     this.instance = new App(canvas);
   }
+
+  public static resize() {
+    this.instance?.manager.resize();
+  }
 }

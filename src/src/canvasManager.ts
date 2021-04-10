@@ -181,4 +181,8 @@ export default class CanvasManager {
   private update() {
     this.scene.render();
   }
+
+  public resize() {
+    this.engine.resize();
+  }
 }

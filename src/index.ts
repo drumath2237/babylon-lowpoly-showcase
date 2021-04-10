@@ -9,4 +9,8 @@ window.addEventListener('DOMContentLoaded', () => {
   if (renderCanvas !== null) {
     App.run(renderCanvas);
   }
+
+  window.addEventListener('resize', ()=>{
+    App.resize();
+  });
 });
