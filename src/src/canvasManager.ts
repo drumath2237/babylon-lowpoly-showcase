@@ -38,7 +38,7 @@ export default class CanvasManager {
         'mainCamera',
         -Math.PI / 2,
         Math.PI / 2,
-        1,
+        1.5,
         new Vector3(0, 0, 0),
         this.scene,
         true,
@@ -82,12 +82,12 @@ export default class CanvasManager {
       }
     });
 
-    document.body.addEventListener('mousemove', (event)=>{
+    document.body.addEventListener('mousemove', (event) => {
       const posX = event.pageX / this.engine.getRenderWidth();
       const posY = event.pageY / this.engine.getRenderHeight();
-      const range = Math.PI/12;
-      this.mainCamera.alpha = ((-Math.PI / 2) + (range / 2)) - (posX * range);
-      this.mainCamera.beta = ((Math.PI / 2) + (range / 2)) - (posY * range);
+      const range = Math.PI / 15;
+      this.mainCamera.alpha = -Math.PI / 2 + range / 2 - posX * range;
+      this.mainCamera.beta = Math.PI / 2 + range / 2 - posY * range;
     });
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
@@ -99,12 +99,10 @@ export default class CanvasManager {
     particleSystem.minEmitBox = new Vector3(-1, -1, -1);
     particleSystem.maxEmitBox = new Vector3(1, 1, 1);
     particleSystem.particleTexture = new Texture(
-      process.env.GH_PAGES === 'true' ?
-        'https://playground.babylonjs.com/textures/flare.png' :
         'https://playground.babylonjs.com/textures/flare.png',
-      this.scene,
+        this.scene,
     );
-    particleSystem.maxSize = 0.010;
+    particleSystem.maxSize = 0.005;
     particleSystem.minSize = 0.007;
     particleSystem.color1 = new Color4(3, 3, 3, 1);
     particleSystem.color2 = new Color4(3, 3, 3, 1);
@@ -123,9 +121,9 @@ export default class CanvasManager {
     particleSystem.noiseTexture = noiseTexture;
     particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
 
-    particleSystem.emitRate = 20;
+    particleSystem.emitRate = 10;
 
-    particleSystem.preWarmCycles = 200;
+    particleSystem.preWarmCycles = 300;
 
     particleSystem.start();
   }
@@ -156,23 +154,23 @@ export default class CanvasManager {
       pipeline.imageProcessing.contrast = 1.2;
     }
     pipeline.imageProcessing.vignetteEnabled = true;
-    pipeline.imageProcessing.vignetteWeight = 5;
+    pipeline.imageProcessing.vignetteWeight = 10;
   }
 
   private customPP() {
     const postProcess = new PostProcess(
         'glitch',
-        process.env.GH_PAGES==='true' ?
+      process.env.GH_PAGES === 'true' ?
         '/babylon-lowpoly-showcase/postprocess/glitch' :
         '/postprocess/glitch',
-        ['resolution', 'time'],
-        null,
-        1.0,
-        this.mainCamera,
+      ['resolution', 'time'],
+      null,
+      1.0,
+      this.mainCamera,
     );
-    postProcess.onApply = (effect:Effect)=>{
+    postProcess.onApply = (effect: Effect) => {
       effect.setFloat2('resolution', postProcess.width, postProcess.height);
-      effect.setFloat('time', this.scene.getFrameId()/this.engine.getFps());
+      effect.setFloat('time', this.scene.getFrameId() / this.engine.getFps());
     };
   }
   /**
