@@ -1,19 +1,23 @@
 import {
   ArcRotateCamera,
   Axis,
+  Color3,
   Color4,
   DefaultRenderingPipeline,
   Effect,
   Engine,
   Mesh,
+  MeshBuilder,
   NoiseProceduralTexture,
   ParticleSystem,
   PostProcess,
   Scene,
   SceneLoader,
   Space,
+  StandardMaterial,
   Texture,
   Vector3,
+  VectorMergerBlock,
 } from '@babylonjs/core';
 
 /**
@@ -58,6 +62,7 @@ export default class CanvasManager {
   private initScene() {
     this.configurePostProcessings();
     this.configureParticles();
+    this.configureLatheObjects();
 
     SceneLoader.ImportMeshAsync(
         'mask',
@@ -93,6 +98,57 @@ export default class CanvasManager {
     // this.mainCamera.attachControl();
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
+  }
+
+  private configureLatheObjects() {
+    const shapes = [
+      [new Vector3(0.45+0.3), new Vector3(0.48+0.3)],
+      [new Vector3(0.50+0.3), new Vector3(0.55+0.3)],
+      [new Vector3(0.57+0.3), new Vector3(0.58+0.3)],
+      [new Vector3(0.65+0.3), new Vector3(0.69+0.3)],
+    ];
+
+    const arcs = [
+      0.5, 0.2, 0.95, 0.3,
+    ];
+
+    const speeds =[
+      1, -3, 0.4, 1.5,
+    ];
+
+    const mat = new StandardMaterial('latheMat', this.scene);
+    mat.emissiveColor = new Color3(1, 1, 1);
+    mat.backFaceCulling = false;
+
+    shapes.forEach((shape, i, _) => {
+      const latheMesh = MeshBuilder.CreateLathe(
+          `lathe${i}`,
+          {
+            shape: shape,
+            arc: arcs[i],
+            closed: false,
+          },
+          this.scene,
+      );
+      latheMesh.material = mat;
+      latheMesh.rotate(
+          new Vector3(1, -3, 2),
+          -0.8,
+          Space.WORLD,
+      );
+      // latheMesh.translate(
+      //     new Vector3(0, -1, 0),
+      //     0.1,
+      //     Space.WORLD,
+      // );
+      latheMesh.onBeforeRenderObservable.add((event)=>{
+        event.rotate(
+            new Vector3(0, 1, 0),
+            0.01*speeds[i],
+            Space.LOCAL,
+        );
+      });
+    });
   }
 
   private configureParticles() {
@@ -156,7 +212,7 @@ export default class CanvasManager {
       pipeline.imageProcessing.contrast = 1.2;
     }
     pipeline.imageProcessing.vignetteEnabled = true;
-    pipeline.imageProcessing.vignetteWeight = 10;
+    pipeline.imageProcessing.vignetteWeight = 13;
   }
 
   private customPP() {
