@@ -17,7 +17,6 @@ import {
   StandardMaterial,
   Texture,
   Vector3,
-  VectorMergerBlock,
 } from '@babylonjs/core';
 
 /**
@@ -42,12 +41,13 @@ export default class CanvasManager {
         'mainCamera',
         -Math.PI / 2,
         Math.PI / 2,
-        1.5,
+        1.3,
         new Vector3(0, 0, 0),
         this.scene,
         true,
     );
     this.mainCamera.minZ = 0;
+    this.mainCamera.fov = 1.2;
 
     this.initScene();
 
@@ -102,10 +102,10 @@ export default class CanvasManager {
 
   private configureLatheObjects() {
     const shapes = [
-      [new Vector3(0.45+0.3), new Vector3(0.48+0.3)],
-      [new Vector3(0.50+0.3), new Vector3(0.55+0.3)],
-      [new Vector3(0.57+0.3), new Vector3(0.58+0.3)],
-      [new Vector3(0.65+0.3), new Vector3(0.69+0.3)],
+      [new Vector3(0.45+0.25), new Vector3(0.48+0.25)],
+      [new Vector3(0.50+0.25), new Vector3(0.55+0.25)],
+      [new Vector3(0.57+0.25), new Vector3(0.58+0.25)],
+      [new Vector3(0.65+0.25), new Vector3(0.69+0.25)],
     ];
 
     const arcs = [
@@ -117,7 +117,7 @@ export default class CanvasManager {
     ];
 
     const mat = new StandardMaterial('latheMat', this.scene);
-    mat.emissiveColor = new Color3(1, 1, 1);
+    mat.emissiveColor = new Color3(1.0, 1.0, 1.0);
     mat.backFaceCulling = false;
 
     shapes.forEach((shape, i, _) => {
@@ -127,13 +127,14 @@ export default class CanvasManager {
             shape: shape,
             arc: arcs[i],
             closed: false,
+            tessellation: 128,
           },
           this.scene,
       );
       latheMesh.material = mat;
       latheMesh.rotate(
           new Vector3(1, -3, 2),
-          -0.8,
+          -0.95,
           Space.WORLD,
       );
       // latheMesh.translate(
@@ -144,7 +145,7 @@ export default class CanvasManager {
       latheMesh.onBeforeRenderObservable.add((event)=>{
         event.rotate(
             new Vector3(0, 1, 0),
-            0.01*speeds[i],
+            0.002*speeds[i],
             Space.LOCAL,
         );
       });
@@ -177,7 +178,7 @@ export default class CanvasManager {
     noiseTexture.octaves = 2;
 
     particleSystem.noiseTexture = noiseTexture;
-    particleSystem.noiseStrength = new Vector3(0.03, 0.03, 0.03);
+    particleSystem.noiseStrength = new Vector3(0.04, 0.1, 0.04);
 
     particleSystem.emitRate = 10;
 
