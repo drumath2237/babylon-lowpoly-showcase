@@ -116,10 +116,10 @@ float snoise3(vec3 v)
                                 dot(p2,x2), dot(p3,x3) ) );
   }
           
-const float interval = 7.0;
+const float interval = 10.0;
 
 void main(void){
-  float strength = smoothstep(interval * 0.9, interval, interval - mod(time, interval));
+  float strength = smoothstep(interval * 0.95, interval, interval - mod(time, interval));
   vec2 shake = vec2(strength * 8.0 + 0.5) * vec2(
     random(vec2(time)) * 2.0 - 1.0,
     random(vec2(time * 2.0)) * 2.0 - 1.0
@@ -134,9 +134,9 @@ void main(void){
     ) / resolution.x;
   float rgbDiff = 0.001;
   float rgbUvX = vUV.x;
-  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y)).r;
+  float r = texture2D(textureSampler, vec2(rgbUvX + rgbDiff, vUV.y) + shake*0.5).r;
   float g = texture2D(textureSampler, vec2(rgbUvX, vUV.y)).g;
-  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y)).b;
+  float b = texture2D(textureSampler, vec2(rgbUvX - rgbDiff, vUV.y) + shake*0.5).b;
 
   float bnTime = floor(time * 20.0) * 200.0;
   float noiseX = step((snoise3(vec3(0.0, vUV.x * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.3);
