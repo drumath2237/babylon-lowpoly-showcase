@@ -60,11 +60,11 @@ export default class CanvasManager {
     this.configureParticles();
 
     SceneLoader.ImportMeshAsync(
-        'trophy',
+        'mask',
       process.env.GH_PAGES === 'true' ?
         '/babylon-lowpoly-showcase/scenes/' :
         '/scenes/',
-      'scene.babylon',
+      'mask.babylon',
       this.scene,
       (event) => {
         if (event.lengthComputable) {
@@ -73,12 +73,13 @@ export default class CanvasManager {
         }
       },
     ).then((_scene) => {
-      const trophy = <Mesh>_scene.meshes[0];
-      if (trophy !== null) {
-        trophy.position = new Vector3(0, -0.2, 0);
-        trophy.scaling = trophy.scaling.multiplyByFloats(0.5, 0.5, 0.5);
-        trophy.rotate(Axis.Y, 1.5 * Math.PI, Space.WORLD);
-        trophy.convertToFlatShadedMesh();
+      const obj = <Mesh>_scene.meshes[0];
+
+      if (obj) {
+        // obj.position = new Vector3(0, -0.2, 0);
+        obj.scaling = obj.scaling.multiplyByFloats(0.4, 0.4, 0.4);
+        obj.rotate(Axis.Y, 1.5 * Math.PI, Space.WORLD);
+        obj.convertToFlatShadedMesh();
       }
     });
 
@@ -89,6 +90,7 @@ export default class CanvasManager {
       this.mainCamera.alpha = -Math.PI / 2 + range / 2 - posX * range;
       this.mainCamera.beta = Math.PI / 2 + range / 2 - posY * range;
     });
+    // this.mainCamera.attachControl();
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
@@ -137,7 +139,7 @@ export default class CanvasManager {
         this.scene,
     );
 
-    pipeline.samples = 16;
+    pipeline.samples = 64;
 
     pipeline.bloomEnabled = true;
     pipeline.bloomThreshold = 0.7;
