@@ -103,12 +103,12 @@ export default class CanvasManager {
 
   private configure3DGUI() {
     const plane = MeshBuilder.CreatePlane('gui plane', {size: 2}, this.scene);
-    plane.position = new Vector3(0, 0.25, 0);
+    plane.position = new Vector3(0, 0.30, 0);
     const guiTexture = AdvancedDynamicTexture.CreateForMesh(plane);
     const text = new TextBlock();
-    text.text = 'Text text';
+    text.text = 'Welcome to\nNinisan\'s Portfolio';
     text.fontFamily = 'Consolas';
-    text.fontSize = 50;
+    text.fontSize = 40;
     text.color = 'white';
     guiTexture.addControl(text);
   }
