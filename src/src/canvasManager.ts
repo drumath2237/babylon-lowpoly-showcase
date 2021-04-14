@@ -34,7 +34,7 @@ export default class CanvasManager {
    */
   public constructor(_canvas: HTMLCanvasElement) {
     this.canvas = _canvas;
-    this.engine = new Engine(this.canvas);
+    this.engine = new Engine(this.canvas, true, {antialias: true});
     this.scene = new Scene(this.engine);
 
     this.mainCamera = new ArcRotateCamera(
@@ -102,19 +102,15 @@ export default class CanvasManager {
 
   private configureLatheObjects() {
     const shapes = [
-      [new Vector3(0.45+0.25), new Vector3(0.48+0.25)],
-      [new Vector3(0.50+0.25), new Vector3(0.55+0.25)],
-      [new Vector3(0.57+0.25), new Vector3(0.58+0.25)],
-      [new Vector3(0.65+0.25), new Vector3(0.69+0.25)],
+      [new Vector3(0.45 + 0.25), new Vector3(0.48 + 0.25)],
+      [new Vector3(0.5 + 0.25), new Vector3(0.55 + 0.25)],
+      [new Vector3(0.57 + 0.25), new Vector3(0.58 + 0.25)],
+      [new Vector3(0.65 + 0.25), new Vector3(0.69 + 0.25)],
     ];
 
-    const arcs = [
-      0.5, 0.2, 0.95, 0.3,
-    ];
+    const arcs = [0.5, 0.2, 0.95, 0.3];
 
-    const speeds =[
-      1, -3, 0.4, 1.5,
-    ];
+    const speeds = [1, -3, 0.4, 1.5];
 
     const mat = new StandardMaterial('latheMat', this.scene);
     mat.emissiveColor = new Color3(1.0, 1.0, 1.0);
@@ -132,22 +128,14 @@ export default class CanvasManager {
           this.scene,
       );
       latheMesh.material = mat;
-      latheMesh.rotate(
-          new Vector3(1, -3, 2),
-          -0.95,
-          Space.WORLD,
-      );
+      latheMesh.rotate(new Vector3(1, -3, 2), -0.95, Space.WORLD);
       // latheMesh.translate(
       //     new Vector3(0, -1, 0),
       //     0.1,
       //     Space.WORLD,
       // );
-      latheMesh.onBeforeRenderObservable.add((event)=>{
-        event.rotate(
-            new Vector3(0, 1, 0),
-            0.002*speeds[i],
-            Space.LOCAL,
-        );
+      latheMesh.onBeforeRenderObservable.add((event) => {
+        event.rotate(new Vector3(0, 1, 0), 0.002 * speeds[i], Space.LOCAL);
       });
     });
   }
@@ -196,7 +184,7 @@ export default class CanvasManager {
         this.scene,
     );
 
-    pipeline.samples = 64;
+    pipeline.samples = 16;
 
     pipeline.bloomEnabled = true;
     pipeline.bloomThreshold = 0.7;
