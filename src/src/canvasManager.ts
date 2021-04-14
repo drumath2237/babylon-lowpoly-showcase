@@ -87,15 +87,14 @@ export default class CanvasManager {
         obj.convertToFlatShadedMesh();
       }
     });
-
-    document.body.addEventListener('mousemove', (event) => {
-      const posX = event.pageX / this.engine.getRenderWidth();
-      const posY = event.pageY / this.engine.getRenderHeight();
+    // this.mainCamera.attachControl();
+    this.scene.onPointerObservable.add((info)=>{
+      const posX = info.event.pageX / this.engine.getRenderWidth();
+      const posY = info.event.pageY / this.engine.getRenderHeight();
       const range = Math.PI / 15;
       this.mainCamera.alpha = -Math.PI / 2 + range / 2 - posX * range;
       this.mainCamera.beta = Math.PI / 2 + range / 2 - posY * range;
     });
-    // this.mainCamera.attachControl();
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
   }
