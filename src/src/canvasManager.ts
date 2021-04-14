@@ -215,6 +215,7 @@ export default class CanvasManager {
       1.0,
       this.mainCamera,
     );
+    postProcess.samples = 16;
     postProcess.onApply = (effect: Effect) => {
       effect.setFloat2('resolution', postProcess.width, postProcess.height);
       effect.setFloat('time', this.scene.getFrameId() / this.engine.getFps());
