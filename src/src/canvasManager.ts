@@ -18,6 +18,7 @@ import {
   Texture,
   Vector3,
 } from '@babylonjs/core';
+import {AdvancedDynamicTexture, TextBlock} from '@babylonjs/gui';
 
 /**
  * Canvas Manager.
@@ -63,6 +64,7 @@ export default class CanvasManager {
     this.configurePostProcessings();
     this.configureParticles();
     this.configureLatheObjects();
+    this.configure3DGUI();
 
     SceneLoader.ImportMeshAsync(
         'mask',
@@ -97,6 +99,18 @@ export default class CanvasManager {
     });
 
     this.scene.clearColor = new Color4(0.014, 0.017, 0.021, 1);
+  }
+
+  private configure3DGUI() {
+    const plane = MeshBuilder.CreatePlane('gui plane', {size: 2}, this.scene);
+    plane.position = new Vector3(0, 0.25, 0);
+    const guiTexture = AdvancedDynamicTexture.CreateForMesh(plane);
+    const text = new TextBlock();
+    text.text = 'Text text';
+    text.fontFamily = 'Consolas';
+    text.fontSize = 50;
+    text.color = 'white';
+    guiTexture.addControl(text);
   }
 
   private configureLatheObjects() {
